@@ -19,10 +19,13 @@
 }
 
 body {
-	background: #232526;  /* fallback for old browsers */
-	background: -webkit-linear-gradient(to right, #414345, #232526);  /* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to right, #414345, #232526); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	
+	background: #232526;
+	/* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #414345, #232526);
+	/* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #414345, #232526);
+	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
 	margin: 100px 0;
 	display: flex;
 	flex-direction: row;
@@ -31,9 +34,7 @@ body {
 #sidebar {
 	width: 300px;
 	height: calc(100vh - 160px);
-	background-color: var(--secondary-color);
 	padding: 20px;
-
 	position: fixed;
 	top: 100px;
 	left: 0;
@@ -72,8 +73,6 @@ body {
 #sidebar #notesList {
 	height: 80%;
 	overflow-y: auto;
-	border: 1px solid var(--primary-color);
-	border-radius: 5px 5px 5px 5px;
 	padding: 10px;
 	margin-top: 20px;
 }
@@ -82,13 +81,48 @@ body {
 	width: calc(100% - 300px);
 	height: calc(100vh - 160px);
 	padding: 20px;
-	background-color: var(--secondary-color);
+	
 	position: fixed;
 	top: 100px;
 	left: 300px;
 	right: 0;
 	bottom: 100px;
 	overflow-y: auto;
+}
+
+.notes-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.note-card {
+	background-color: var(--white-smoke);
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	box-shadow: var(--box-shadow);
+	cursor: pointer;
+	transition: transform 0.3s ease;
+}
+
+.note-card:hover {
+	transform: translateY(-2px);
+}
+
+.note-card .title {
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.note-card .content {
+	font-size: 0.9em;
+	color: var(--dark-slate-gray);
+	overflow: hidden;
+	/* Hide overflowing content */
+	text-overflow: ellipsis;
+	/* Add ellipsis for overflowing text */
+	white-space: nowrap;
+	/* Prevent wrapping */
 }
 
 .note {

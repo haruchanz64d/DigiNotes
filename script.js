@@ -21,10 +21,14 @@ let noteId;
 
 function createNoteElement(note) {
   const noteElement = document.createElement('div');
-  noteElement.innerHTML = `<h2>${note.title}</h2>`;
+  noteElement.classList.add('note-card');
+  noteElement.innerHTML = `
+    <div class="title">${note.title}</div>
+    <div class="content">${truncateText(note.content, 100)}</div> <!-- Limit to 100 characters -->
+  `;
   noteElement.dataset.id = note.id;
   noteElement.onclick = function (e) {
-    if (e.target.tagName === 'H2') {
+    if (e.target.tagName === 'DIV' && e.target.classList.contains('title')) {
       const noteTitle = e.target.textContent;
       const selectedNote = notes.find(note => note.title === noteTitle);
       if (selectedNote) {
@@ -38,6 +42,14 @@ function createNoteElement(note) {
     }
   };
   return noteElement;
+}
+
+// Function to truncate text
+function truncateText(text, maxLength) {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.slice(0, maxLength) + '...';
 }
 
 function updateNotes(notesToUpdate = notes) {
@@ -64,6 +76,8 @@ deleteAll.onclick = function () {
     }
     else {
       notes = [];
+      title.value = '';
+      content.value = '';
     alert('All notes have been deleted.');
     updateNotes();
     localStorage.setItem('notes', JSON.stringify(notes));

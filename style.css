@@ -21,8 +21,7 @@
 body {
 	background: #232526;
 	background: -webkit-linear-gradient(to right, #414345, #232526);
-	background: linear-gradient(to right, #414345, #232526);
-	
+	background: linear-gradient(to right, #414345, #232526);	
 	margin: 100px 0;
 	display: flex;
 	flex-direction: row;
@@ -31,9 +30,7 @@ body {
 #sidebar {
 	width: 300px;
 	height: calc(100vh - 160px);
-	background-color: var(--secondary-color);
 	padding: 20px;
-
 	position: fixed;
 	top: 100px;
 	left: 0;
@@ -78,7 +75,6 @@ body {
 	width: calc(100% - 300px);
 	height: calc(100vh - 160px);
 	padding: 20px;
-	background-color: var(--secondary-color);
 	position: fixed;
 	top: 100px;
 	left: 300px;

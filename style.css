@@ -160,3 +160,40 @@ footer a {
 footer a:hover {
 	color: #ffffff;
 }
+
+.notes-list {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .note-card {
+	background-color: var(--white-smoke);
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	box-shadow: var(--box-shadow);
+	cursor: pointer;
+	transition: transform 0.3s ease;
+  }
+  
+  .note-card:hover {
+	transform: translateY(-2px);
+  }
+  
+  .note-card .title {
+	font-weight: bold;
+	margin-bottom: 5px;
+  }
+  
+  .note-card .content {
+	font-size: 0.9em;
+	color: var(--dark-slate-gray);
+  }
+  .note-card .content {
+	font-size: 0.9em;
+	color: var(--dark-slate-gray);
+	overflow: hidden; /* Hide overflowing content */
+	text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+	white-space: nowrap; /* Prevent wrapping */
+  }
+	

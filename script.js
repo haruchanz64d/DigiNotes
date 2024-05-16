@@ -21,16 +21,20 @@ let noteId;
 
 function createNoteElement(note) {
   const noteElement = document.createElement('div');
-  noteElement.innerHTML = `<h2>${note.title}</h2>`;
+  noteElement.classList.add('note-card');
+  noteElement.innerHTML = `
+    <div class="title">${note.title}</div>
+    <div class="content">${truncateText(note.content, 100)}</div>
+  `;
   noteElement.dataset.id = note.id;
   noteElement.onclick = function (e) {
-    if (e.target.tagName === 'H2') {
+    if (e.target.tagName === 'DIV' && e.target.classList.contains('title')) {
       const noteTitle = e.target.textContent;
       const selectedNote = notes.find(note => note.title === noteTitle);
       if (selectedNote) {
         title.value = selectedNote.title;
         content.value = selectedNote.content;
-        noteId = selectedNote.id; // store the id of the selected note
+        noteId = selectedNote.id;
         document.getElementById('noteContent').style.display = 'block';
       } else {
         console.error(`Note not found: ${noteTitle}`);
@@ -40,6 +44,14 @@ function createNoteElement(note) {
   return noteElement;
 }
 
+function truncateText(text, maxLength) {
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return text.slice(0, maxLength) + '...';
+}
+
+
 function updateNotes(notesToUpdate = notes) {
   notesList.innerHTML = '';
   notesToUpdate.forEach(note => {
@@ -47,6 +59,7 @@ function updateNotes(notesToUpdate = notes) {
     notesList.appendChild(noteElement);
   });
 }
+
 
 newNote.onclick = function () {
   document.getElementById('noteContent').style.display = 'block';

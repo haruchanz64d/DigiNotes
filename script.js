@@ -23,7 +23,7 @@ function createNoteElement(note) {
   const noteElement = document.createElement('div');
   noteElement.classList.add('note-card');
   noteElement.innerHTML = `
-    <div class="title">${truncateText(note.title, 100)}</div>
+    <div class="title">${note.title}</div>
     <div class="content">${truncateText(note.content, 100)}</div>
   `;
   noteElement.dataset.id = note.id;
@@ -90,7 +90,12 @@ saveButton.onclick = function () {
   const existingNoteIndex = notes.findIndex(note => note.id === noteId);
 
   const noteIsEmpty = !noteTitle.trim();
+  const maxTitleLength = 50;
 
+  if (noteTitle.length > maxTitleLength) {
+    alert(`Error: Note title cannot exceed ${maxTitleLength} characters.`);
+    return;
+  }
   if (noteIsEmpty) {
     alert('Error: Note title cannot be empty.');
     return;

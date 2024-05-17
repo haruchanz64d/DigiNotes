@@ -23,7 +23,7 @@ function createNoteElement(note) {
   const noteElement = document.createElement('div');
   noteElement.classList.add('note-card');
   noteElement.innerHTML = `
-    <div class="title">${note.title}</div>
+    <div class="title">${truncateText(note.title, 100)}</div>
     <div class="content">${truncateText(note.content, 100)}</div>
   `;
   noteElement.dataset.id = note.id;

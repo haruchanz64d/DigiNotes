@@ -77,9 +77,11 @@ deleteAll.onclick = function () {
     }
     else {
       notes = [];
-    alert('All notes have been deleted.');
-    updateNotes();
-    localStorage.setItem('notes', JSON.stringify(notes));
+      alert('All notes have been deleted.');
+      updateNotes();
+      localStorage.setItem('notes', JSON.stringify(notes));
+      title.value = '';
+      content.value = '';
     }
   }
 };
@@ -116,15 +118,15 @@ saveButton.onclick = function () {
   }
 
   updateNotes();
-  document.getElementById('noteContent').style.display = 'none';
   localStorage.setItem('notes', JSON.stringify(notes));
 };
 
 deleteButton.onclick = function () {
   const noteId = notes.find(note => note.title === title.value).id;
-  notes = notes.filter(note => note.id !== noteId);
+  notes = notes.filter(note => note.id!== noteId);
+  title.value = '';
+  content.value = '';
   updateNotes();
-  document.getElementById('noteContent').style.display = 'none';
   localStorage.setItem('notes', JSON.stringify(notes));
 };
 
@@ -135,9 +137,10 @@ search.oninput = function () {
 };
 
 cancelButton.onclick = function () {
-  document.getElementById('noteContent').style.display = 'none';
+  title.value = '';
+  content.value = '';
+  noteId = null;
 };
-
 
 document.addEventListener('DOMContentLoaded', function () {
   const storedNotes = localStorage.getItem('notes');
@@ -145,4 +148,5 @@ document.addEventListener('DOMContentLoaded', function () {
     notes = JSON.parse(storedNotes);
     updateNotes();
   }
+  document.getElementById('noteContent').style.display = 'block';
 });

@@ -12,6 +12,45 @@
     --green: #90d390;
 }
 
+@media screen and (min-width: 768px) {
+    body {
+        margin: 50px 0;
+    }
+
+    #sidebar {
+        width: 300px;
+        height: calc(100vh - 100px);
+        top: 50px;
+    }
+
+    #noteContent {
+        width: calc(100% - 300px);
+        height: calc(100vh - 100px);
+        top: 50px;
+        left: 300px;
+    }
+
+    footer {
+        bottom: 0;
+    }
+}
+
+/* For desktops */
+@media screen and (min-width: 1024px) {
+    body {
+        margin: 100px 0;
+    }
+
+    #sidebar {
+        width: 350px;
+    }
+
+    #noteContent {
+        width: calc(100% - 350px);
+        left: 350px;
+    }
+}
+
 
 * {
 	padding: 0;

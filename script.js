@@ -62,10 +62,7 @@ function createNoteElement(note) {
     noteElement.onclick = function () {
         const selectedNote = notes.find(n => n.id === note.id);
         if (selectedNote) {
-            title.value = selectedNote.title;
-            content.value = selectedNote.content;
-            noteId = selectedNote.id;
-            document.getElementById('noteContent').style.display = 'block';
+            setNoteContentForEditing(selectedNote); // Set up for editing mode
         } else {
             console.error(`Note not found: ${note.id}`);
         }
@@ -87,7 +84,6 @@ function updateNotes(notesToUpdate = notes) {
         notesList.appendChild(noteElement);
     });
 }
-
 saveButton.onclick = function () {
     const noteTitle = title.value;
     const noteContent = content.value;
@@ -97,7 +93,7 @@ saveButton.onclick = function () {
     const maxTitleLength = 50;
 
     if (noteTitle.length > maxTitleLength) {
-       createToast(`Note title cannot exceed ${maxTitleLength} characters.`, 'error');
+        createToast(`Note title cannot exceed ${maxTitleLength} characters.`, 'error');
         return;
     }
     if (noteIsEmpty) {
@@ -117,14 +113,13 @@ saveButton.onclick = function () {
         };
         notes.push(newNote);
         createToast('Note added successfully.', 'success');
-        title.value = '';
-        content.value = '';
     }
 
     updateNotes();
     localStorage.setItem('notes', JSON.stringify(notes));
-};
 
+    setNoteContentForDefault(); // Switch back to default mode after saving
+};
 deleteAllButton.onclick = function () {
     if (notes.length === 0) {
         createToast("No notes to delete.");
@@ -154,10 +149,8 @@ deleteButton.onclick = function () {
         createToast('Note deleted successfully.', 'success');
         updateNotes();
         localStorage.setItem('notes', JSON.stringify(notes));
-        title.value = '';
-        content.value = '';
-        noteId = null;
     }
+    setNoteContentForDefault(); // Switch back to default mode after deletion
 };
 
 window.onclick = function (event) {
@@ -177,9 +170,7 @@ search.oninput = function () {
 };
 
 cancelButton.onclick = function () {
-    title.value = '';
-    content.value = '';
-    noteId = null;
+    setNoteContentForDefault(); // Switch back to default mode on cancel
     createToast('Note cleared.', 'success');
 };
 
@@ -189,8 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         notes = JSON.parse(storedNotes);
         updateNotes();
     }
-    
-    document.getElementById('noteContent').style.display = 'block';
+    setupDefaultMode();
 });
 
 function showModal(message, confirmation = false, isOkButton = false) {
@@ -213,4 +203,33 @@ function showModal(message, confirmation = false, isOkButton = false) {
 
 function closeModal() {
     modal.style.display = 'none';
+}
+
+
+function setupEditNoteMode() {
+    saveButton.innerHTML = '<i class="fa-sharp fa-solid fa-floppy-disk"></i>';
+    deleteButton.innerHTML = '<i class="fa-sharp fa-solid fa-trash"></i>';
+}
+
+function setupDefaultMode() {
+    saveButton.innerHTML = '<i class="fa-sharp fa-solid fa-plus"></i>';
+    cancelButton.innerHTML = '<i class="fa-sharp fa-solid fa-eraser"></i>';
+}
+
+// Function to set up the note content for editing mode
+function setNoteContentForEditing(note) {
+    title.value = note.title;
+    content.value = note.content;
+    noteId = note.id;
+    document.getElementById('noteContent').style.display = 'block';
+    setupEditNoteMode(); // Switch to edit mode icons
+}
+
+// Function to set up the note content for default mode
+function setNoteContentForDefault() {
+    title.value = '';
+    content.value = '';
+    noteId = null;
+    document.getElementById('noteContent').style.display = 'block';
+    setupDefaultMode(); // Switch to default mode icons
 }

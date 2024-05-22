@@ -8,8 +8,10 @@
 	--teal: #488286ff;
 	--light-blue: rgba(173, 245, 242, 0.384);
 	--white-smoke: #f5f5f5ff;
-	--red: #ff0000;
+	--red: #ff7777; /* Softer red */
+    --green: #77dd77; /* Softer green */
 }
+
 
 * {
 	padding: 0;
@@ -58,6 +60,12 @@ body {
 	border-radius: 5px;
 	cursor: pointer;
 	margin-bottom: 20px;
+	width: 100%;
+}
+
+#sidebar #deleteAll:hover {
+	background-color: var(--red);
+	color: #ffffff;
 }
 
 #sidebar #notesList {
@@ -121,6 +129,7 @@ body {
 	cursor: pointer;
 	margin-left: 10px;
 }
+
 
 .note textarea {
 	width: 100%;
@@ -201,4 +210,105 @@ footer a:hover {
 	text-overflow: ellipsis; /* Add ellipsis for overflowing text */
 	white-space: nowrap; /* Prevent wrapping */
   }
-	
+  .modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	background-color: white;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 400px;
+	border-radius: 10px;
+	text-align: center;
+	box-shadow: var(--box-shadow);
+}
+
+.modal .close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.modal .modal-buttons {
+	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+
+.modal-buttons button {
+	padding: 10px 20px;
+	cursor: pointer;
+	border: none;
+	border-radius: 5px;
+	color: white;
+	font-size: 16px;
+}
+
+#confirmDelete {
+	background-color: #4CAF50; /* Green color for "Yes" button */
+}
+
+#cancelDelete {
+	background-color: #f44336; /* Red color for "No" button */
+}
+
+.ok-button {
+	background-color: #4CAF50 !important; /* Green color for "OK" button */
+}
+
+.toast-container {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    padding: 20px 30px; /* Increased padding for a bigger toast */
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 10px;
+    opacity: 0;
+	color: white;
+    transition: opacity 0.5s ease-in-out;
+    font-size: 1.2em;
+}
+
+.toast.success {
+    background-color: var(--green);
+}
+
+.toast.error {
+    background-color: var(--red);
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.toast .icon {
+    margin-right: 10px;
+}

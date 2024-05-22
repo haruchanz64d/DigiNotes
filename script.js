@@ -1,152 +1,216 @@
 const NOTES_LIST_SELECTOR = '#notesList';
-const NEW_NOTE_SELECTOR = '#newNote';
 const TITLE_SELECTOR = '#title';
 const CONTENT_SELECTOR = '#content';
 const SAVE_BUTTON_SELECTOR = '.note .header .save';
 const DELETE_BUTTON_SELECTOR = '.note .header .delete';
 const SEARCH_SELECTOR = '#search';
 const CANCEL_BUTTON_SELECTOR = '.note .header .cancel';
+const DELETE_ALL_BUTTON_SELECTOR = '#deleteAll';
+const TOAST_CONTAINER_SELECTOR = '#toastContainer';
 
 const notesList = document.querySelector(NOTES_LIST_SELECTOR);
-const newNote = document.querySelector(NEW_NOTE_SELECTOR);
 const title = document.querySelector(TITLE_SELECTOR);
 const content = document.querySelector(CONTENT_SELECTOR);
 const saveButton = document.querySelector(SAVE_BUTTON_SELECTOR);
 const deleteButton = document.querySelector(DELETE_BUTTON_SELECTOR);
 const search = document.querySelector(SEARCH_SELECTOR);
 const cancelButton = document.querySelector(CANCEL_BUTTON_SELECTOR);
+const deleteAllButton = document.querySelector(DELETE_ALL_BUTTON_SELECTOR);
+const toastContainer = document.querySelector(TOAST_CONTAINER_SELECTOR);
+
+const modal = document.getElementById('modal');
+const cancelDeleteAllButton = document.getElementById('cancelDelete');
+const confirmDeleteAllButton = document.getElementById('confirmDelete');
+const closeButton = document.getElementById('closeModal');
+const modalMessage = document.getElementById('modalMessage');
 
 let notes = [];
 let noteId;
 
-function createNoteElement(note) {
-  const noteElement = document.createElement('div');
-  noteElement.classList.add('note-card');
-  noteElement.innerHTML = `
-    <div class="title">${note.title}</div>
-    <div class="content">${truncateText(note.content, 100)}</div>
+function createToast(message, type) {
+  const toast = document.createElement('div');
+  toast.classList.add('toast', type);
+  toast.innerHTML = `
+      <span class="icon">${type === 'success' ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-x"></i>'}</span>
+      <span>${message}</span>
   `;
-  noteElement.dataset.id = note.id;
-  noteElement.onclick = function (e) {
-    if (e.target.tagName === 'DIV' && e.target.classList.contains('title')) {
-      const noteTitle = e.target.textContent;
-      const selectedNote = notes.find(note => note.title === noteTitle);
-      if (selectedNote) {
-        title.value = selectedNote.title;
-        content.value = selectedNote.content;
-        noteId = selectedNote.id;
-        document.getElementById('noteContent').style.display = 'block';
-      } else {
-        console.error(`Note not found: ${noteTitle}`);
-      }
-    }
-  };
-  return noteElement;
+  toastContainer.appendChild(toast);
+
+  // Show the toast
+  setTimeout(() => {
+      toast.classList.add('show');
+  }, 100);
+
+  // Hide the toast after 3 seconds
+  setTimeout(() => {
+      toast.classList.remove('show');
+      // Remove the toast from DOM after the transition ends
+      setTimeout(() => {
+          toast.remove();
+      }, 500);
+  }, 3000);
+}
+
+function createNoteElement(note) {
+    const noteElement = document.createElement('div');
+    noteElement.classList.add('note-card');
+    noteElement.innerHTML = `
+        <div class="title">${note.title}</div>
+        <div class="content">${truncateText(note.content, 100)}</div>
+    `;
+    noteElement.dataset.id = note.id;
+    noteElement.onclick = function () {
+        const selectedNote = notes.find(n => n.id === note.id);
+        if (selectedNote) {
+            title.value = selectedNote.title;
+            content.value = selectedNote.content;
+            noteId = selectedNote.id;
+            document.getElementById('noteContent').style.display = 'block';
+        } else {
+            console.error(`Note not found: ${note.id}`);
+        }
+    };
+    return noteElement;
 }
 
 function truncateText(text, maxLength) {
-  if (text.length <= maxLength) {
-    return text;
-  }
-  return text.slice(0, maxLength) + '...';
+    if (text.length <= maxLength) {
+        return text;
+    }
+    return text.slice(0, maxLength) + '...';
 }
-
 
 function updateNotes(notesToUpdate = notes) {
-  notesList.innerHTML = '';
-  notesToUpdate.forEach(note => {
-    const noteElement = createNoteElement(note);
-    notesList.appendChild(noteElement);
-  });
+    notesList.innerHTML = '';
+    notesToUpdate.forEach(note => {
+        const noteElement = createNoteElement(note);
+        notesList.appendChild(noteElement);
+    });
 }
 
-
-newNote.onclick = function () {
-  document.getElementById('noteContent').style.display = 'block';
-  title.value = '';
-  content.value = '';
-  noteId = null;
-};
-
-deleteAll.onclick = function () {
-  const confirmDelete = confirm('Are you sure you want to delete all notes?');
-  if (confirmDelete) {
-    if (notes.length === 0) {
-      alert('There are no notes to delete.');
-      return;
-    }
-    else {
-      notes = [];
-      alert('All notes have been deleted.');
-      updateNotes();
-      localStorage.setItem('notes', JSON.stringify(notes));
-      title.value = '';
-      content.value = '';
-    }
-  }
-};
-
 saveButton.onclick = function () {
-  const noteTitle = title.value;
-  const noteContent = content.value;
-  const existingNoteIndex = notes.findIndex(note => note.id === noteId);
+    const noteTitle = title.value;
+    const noteContent = content.value;
+    const existingNoteIndex = notes.findIndex(note => note.id === noteId);
 
-  const noteIsEmpty = !noteTitle.trim();
-  const maxTitleLength = 50;
+    const noteIsEmpty = !noteTitle.trim();
+    const maxTitleLength = 50;
 
-  if (noteTitle.length > maxTitleLength) {
-    alert(`Error: Note title cannot exceed ${maxTitleLength} characters.`);
-    return;
-  }
-  if (noteIsEmpty) {
-    alert('Error: Note title cannot be empty.');
-    return;
-  }
+    if (noteTitle.length > maxTitleLength) {
+       createToast(`Note title cannot exceed ${maxTitleLength} characters.`, 'error');
+        return;
+    }
+    if (noteIsEmpty) {
+        createToast('Note title cannot be empty.', 'error');
+        return;
+    }
 
-  if (existingNoteIndex !== -1) {
-    notes[existingNoteIndex].title = noteTitle;
-    notes[existingNoteIndex].content = noteContent;
-  } else {
-    const newNote = {
-      id: Date.now(),
-      title: noteTitle,
-      content: noteContent
-    };
-    notes.push(newNote);
+    if (existingNoteIndex !== -1) {
+        notes[existingNoteIndex].title = noteTitle;
+        notes[existingNoteIndex].content = noteContent;
+        createToast('Note updated successfully.', 'success');
+    } else {
+        const newNote = {
+            id: Date.now(),
+            title: noteTitle,
+            content: noteContent
+        };
+        notes.push(newNote);
+        createToast('Note added successfully.', 'success');
+        title.value = '';
+        content.value = '';
+    }
+
+    updateNotes();
+    localStorage.setItem('notes', JSON.stringify(notes));
+};
+
+deleteAllButton.onclick = function () {
+    if (notes.length === 0) {
+        createToast("No notes to delete.");
+    } else {
+        showModal('Are you sure you want to delete all notes?', true);
+    }
+};
+
+confirmDeleteAllButton.onclick = function () {
+    // Clear all notes
+    notes = [];
+    updateNotes();
+    localStorage.setItem('notes', JSON.stringify(notes));
     title.value = '';
     content.value = '';
-  }
+    closeModal();
+    createToast('All notes deleted successfully.', 'success');
+};
 
-  updateNotes();
-  localStorage.setItem('notes', JSON.stringify(notes));
+cancelDeleteAllButton.onclick = function () {
+    closeModal();
 };
 
 deleteButton.onclick = function () {
-  const noteId = notes.find(note => note.title === title.value).id;
-  notes = notes.filter(note => note.id!== noteId);
-  title.value = '';
-  content.value = '';
-  updateNotes();
-  localStorage.setItem('notes', JSON.stringify(notes));
+    if (noteId !== null) {
+        notes = notes.filter(note => note.id !== noteId);
+        createToast('Note deleted successfully.', 'success');
+        updateNotes();
+        localStorage.setItem('notes', JSON.stringify(notes));
+        title.value = '';
+        content.value = '';
+        noteId = null;
+    }
+};
+
+window.onclick = function (event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+};
+
+closeButton.onclick = function () {
+    closeModal();
 };
 
 search.oninput = function () {
-  const searchText = search.value.toLowerCase();
-  const filteredNotes = notes.filter(note => note.title.toLowerCase().includes(searchText));
-  updateNotes(filteredNotes);
+    const searchText = search.value.toLowerCase();
+    const filteredNotes = notes.filter(note => note.title.toLowerCase().includes(searchText));
+    updateNotes(filteredNotes);
 };
 
 cancelButton.onclick = function () {
-  title.value = '';
-  content.value = '';
-  noteId = null;
+    title.value = '';
+    content.value = '';
+    noteId = null;
+    createToast('Note cleared.', 'success');
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  const storedNotes = localStorage.getItem('notes');
-  if (storedNotes) {
-    notes = JSON.parse(storedNotes);
-    updateNotes();
-  }
-  document.getElementById('noteContent').style.display = 'block';
+    const storedNotes = localStorage.getItem('notes');
+    if (storedNotes) {
+        notes = JSON.parse(storedNotes);
+        updateNotes();
+    }
+    
+    document.getElementById('noteContent').style.display = 'block';
 });
+
+function showModal(message, confirmation = false, isOkButton = false) {
+    modalMessage.textContent = message;
+
+    if (isOkButton) {
+        cancelDeleteAllButton.textContent = 'OK';
+        cancelDeleteAllButton.style.backgroundColor = '#4CAF50'; // Green color
+        cancelDeleteAllButton.style.display = 'block';
+        confirmDeleteAllButton.style.display = 'none';
+    } else {
+        cancelDeleteAllButton.textContent = 'No';
+        cancelDeleteAllButton.style.backgroundColor = '#f44336'; // Red color
+        confirmDeleteAllButton.style.display = confirmation ? 'block' : 'none';
+        cancelDeleteAllButton.style.display = 'block';
+    }
+
+    modal.style.display = 'block';
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+}

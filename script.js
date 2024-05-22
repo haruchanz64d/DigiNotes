@@ -51,6 +51,7 @@ function createToast(message, type) {
   }, 3000);
 }
 
+
 function createNoteElement(note) {
     const noteElement = document.createElement('div');
     noteElement.classList.add('note-card');
@@ -122,7 +123,7 @@ saveButton.onclick = function () {
 };
 deleteAllButton.onclick = function () {
     if (notes.length === 0) {
-        createToast("No notes to delete.");
+        createToast("No notes to delete.", 'error');
     } else {
         showModal('Are you sure you want to delete all notes?', true);
     }
@@ -150,7 +151,7 @@ deleteButton.onclick = function () {
         updateNotes();
         localStorage.setItem('notes', JSON.stringify(notes));
     }
-    setNoteContentForDefault(); // Switch back to default mode after deletion
+    setNoteContentForDefault();
 };
 
 window.onclick = function (event) {
@@ -170,7 +171,7 @@ search.oninput = function () {
 };
 
 cancelButton.onclick = function () {
-    setNoteContentForDefault(); // Switch back to default mode on cancel
+    setNoteContentForDefault();
     createToast('Note cleared.', 'success');
 };
 
@@ -188,12 +189,12 @@ function showModal(message, confirmation = false, isOkButton = false) {
 
     if (isOkButton) {
         cancelDeleteAllButton.textContent = 'OK';
-        cancelDeleteAllButton.style.backgroundColor = '#4CAF50'; // Green color
+        cancelDeleteAllButton.style.backgroundColor = '#4CAF50';
         cancelDeleteAllButton.style.display = 'block';
         confirmDeleteAllButton.style.display = 'none';
     } else {
         cancelDeleteAllButton.textContent = 'No';
-        cancelDeleteAllButton.style.backgroundColor = '#f44336'; // Red color
+        cancelDeleteAllButton.style.backgroundColor = '#f44336';
         confirmDeleteAllButton.style.display = confirmation ? 'block' : 'none';
         cancelDeleteAllButton.style.display = 'block';
     }

@@ -85,11 +85,10 @@ function updateNotes(notesToUpdate = notes) {
         notesList.appendChild(noteElement);
     });
 }
+
 saveButton.onclick = function () {
     const noteTitle = title.value;
     const noteContent = content.value;
-    const existingNoteIndex = notes.findIndex(note => note.id === noteId);
-
     const noteIsEmpty = !noteTitle.trim();
     const maxTitleLength = 50;
 
@@ -102,25 +101,34 @@ saveButton.onclick = function () {
         return;
     }
 
-    if (existingNoteIndex !== -1) {
-        notes[existingNoteIndex].title = noteTitle;
-        notes[existingNoteIndex].content = noteContent;
-        createToast('Note updated successfully.', 'success');
-    } else {
-        const newNote = {
-            id: Date.now(),
-            title: noteTitle,
-            content: noteContent
-        };
-        notes.push(newNote);
-        createToast('Note added successfully.', 'success');
-    }
+    const method = noteId ? 'PUT' : 'POST';
+    const url = 'notes.php';
+    const data = noteId ? { id: noteId, title: noteTitle, content: noteContent } : { title: noteTitle, content: noteContent };
 
-    updateNotes();
-    localStorage.setItem('notes', JSON.stringify(notes));
-
-    setNoteContentForDefault(); // Switch back to default mode after saving
+    fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(note => {
+        if (noteId) {
+            const index = notes.findIndex(n => n.id === noteId);
+            notes[index] = note;
+            createToast('Note updated successfully.', 'success');
+        } else {
+            notes.push(note);
+            createToast('Note added successfully.', 'success');
+        }
+        updateNotes();
+        setNoteContentForDefault();
+    })
+    .catch(error => {
+        console.error('Error saving note:', error);
+        createToast('Error saving note.', 'error');
+    });
 };
+
 deleteAllButton.onclick = function () {
     if (notes.length === 0) {
         createToast("No notes to delete.", 'error');
@@ -130,15 +138,30 @@ deleteAllButton.onclick = function () {
 };
 
 confirmDeleteAllButton.onclick = function () {
-    // Clear all notes
-    notes = [];
-    updateNotes();
-    localStorage.setItem('notes', JSON.stringify(notes));
-    title.value = '';
-    content.value = '';
+    fetch('notes.php', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: 'all' })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.error) {
+            createToast('Error deleting notes.', 'error');
+        } else {
+            notes = [];
+            updateNotes();
+            title.value = '';
+            content.value = '';
+            createToast('All notes deleted successfully.', 'success');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting all notes:', error);
+        createToast('Error deleting all notes.', 'error');
+    });
     closeModal();
-    createToast('All notes deleted successfully.', 'success');
 };
+
 
 cancelDeleteAllButton.onclick = function () {
     closeModal();
@@ -146,13 +169,29 @@ cancelDeleteAllButton.onclick = function () {
 
 deleteButton.onclick = function () {
     if (noteId !== null) {
-        notes = notes.filter(note => note.id !== noteId);
-        createToast('Note deleted successfully.', 'success');
-        updateNotes();
-        localStorage.setItem('notes', JSON.stringify(notes));
+        fetch('notes.php', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: noteId })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.error) {
+                createToast('Error deleting note.', 'error');
+            } else {
+                notes = notes.filter(note => note.id !== noteId);
+                createToast('Note deleted successfully.', 'success');
+                updateNotes();
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting note:', error);
+            createToast('Error deleting note.', 'error');
+        });
     }
     setNoteContentForDefault();
 };
+
 
 window.onclick = function (event) {
     if (event.target == modal) {
@@ -176,11 +215,13 @@ cancelButton.onclick = function () {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    const storedNotes = localStorage.getItem('notes');
-    if (storedNotes) {
-        notes = JSON.parse(storedNotes);
+    fetch('notes.php')
+    .then(response => response.json())
+    .then(data => {
+        notes = data;
         updateNotes();
-    }
+    })
+    .catch(error => console.error('Error fetching notes:', error));
     setupDefaultMode();
 });
 

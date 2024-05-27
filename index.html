@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiNotes - Login & Register</title>
+    <link rel="stylesheet" href="./assets/style/main_style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="./assets/images/app_logo.png" id="logo" alt="Logo" class="logo">
+                <img src="./assets/images/logo.png" id="name" alt="DigiNotes" class="name">
+            </div>
+        </div>
+    </header>
+    
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-toggle">
+                <button id="login-toggle" class="active" onclick="toggleForm('login')">Login</button>
+                <button id="register-toggle" onclick="toggleForm('register')">Register</button>
+            </div>
+
+            <form id="login-form" class="form" method="POST" action="login.php">
+                <h2>Login</h2>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" name="login">Login</button>
+            </form>
+
+            <form id="register-form" class="form" method="POST" action="login.php" style="display: none;">
+                <h2>Register</h2>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" name="register">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="./assets/js/main.js"></script>
+    <script>
+        function toggleForm(form) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const loginToggle = document.getElementById('login-toggle');
+            const registerToggle = document.getElementById('register-toggle');
+
+            if (form === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginToggle.classList.add('active');
+                registerToggle.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginToggle.classList.remove('active');
+                registerToggle.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleForm('login');
+        });
+    </script>
+</body>
+</html>
+
+

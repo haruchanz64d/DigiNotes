@@ -197,6 +197,7 @@ cancelDeleteAllButton.onclick = function () {
 };
 
 deleteButton.onclick = function () {
+    if(noteId == null) {setNoteContentForDefault(); return;}
     if (noteId !== null) {
         fetch('notes.php', {
             method: 'DELETE',
@@ -294,7 +295,6 @@ function setupEditNoteMode() {
 
 function setupDefaultMode() {
     saveButton.innerHTML = '<i class="fa-sharp fa-solid fa-plus"></i>';
-    deleteButton.innerHTML = '<i class="fa-sharp fa-solid fa-eraser"></i>';
 }
 
 // Function to set up the note content for editing mode

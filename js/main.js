@@ -6,7 +6,6 @@ const SAVE_BUTTON_SELECTOR = '.note .header .save';
 const DELETE_BUTTON_SELECTOR = '.note .header .delete';
 const SEARCH_SELECTOR = '#search';
 const CANCEL_BUTTON_SELECTOR = '.note .header .cancel';
-const DELETE_ALL_BUTTON_SELECTOR = '#deleteAll';
 const TOAST_CONTAINER_SELECTOR = '#toastContainer';
 
 const notesList = document.querySelector(NOTES_LIST_SELECTOR);
@@ -16,12 +15,9 @@ const saveButton = document.querySelector(SAVE_BUTTON_SELECTOR);
 const deleteButton = document.querySelector(DELETE_BUTTON_SELECTOR);
 const search = document.querySelector(SEARCH_SELECTOR);
 const cancelButton = document.querySelector(CANCEL_BUTTON_SELECTOR);
-const deleteAllButton = document.querySelector(DELETE_ALL_BUTTON_SELECTOR);
 const toastContainer = document.querySelector(TOAST_CONTAINER_SELECTOR);
 
 const modal = document.getElementById('modal');
-const cancelDeleteAllButton = document.getElementById('cancelDelete');
-const confirmDeleteAllButton = document.getElementById('confirmDelete');
 const closeButton = document.getElementById('closeModal');
 const modalMessage = document.getElementById('modalMessage');
 
@@ -156,45 +152,6 @@ saveButton.onclick = function () {
     });
 };
 
-
-
-deleteAllButton.onclick = function () {
-    if (notes.length === 0) {
-        createToast("No notes to delete.", 'error');
-    } else {
-        showModal('Are you sure you want to delete all notes?', true);
-    }
-};
-
-confirmDeleteAllButton.onclick = function () {
-    fetch('notes.php', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: userId }) // Pass the user_id to the PHP script
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.error) {
-            createToast('Error deleting notes.', 'error');
-        } else {
-            notes = [];
-            updateNotes();
-            title.value = '';
-            content.value = '';
-            createToast('All notes deleted successfully.', 'success');
-        }
-    })
-    .catch(error => {
-        console.error('Error deleting all notes:', error);
-        createToast('Error deleting all notes.', 'error');
-    });
-    closeModal();
-};
-
-
-cancelDeleteAllButton.onclick = function () {
-    closeModal();
-};
 
 deleteButton.onclick = function () {
     if(noteId == null) {setNoteContentForDefault(); return;}

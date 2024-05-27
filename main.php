@@ -25,7 +25,7 @@
     <div id="main">
         <div id="sidebar">
             <input type="text" id="search" placeholder="Search">
-            <button id="deleteAll" class="delete-all-button"><i class="fa-sharp fa-solid fa-trash"></i> Delete All</button>
+            
             <h2 id="savedNotesTitle">Notes</h2>
             <div id="notesList" class="notes-list"></div>
         </div>
